@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
-from routes.admin_routes import admin_route
-from routes.auth_routes import auth_route
+from admin import admin_route
+from routes import auth_route
 from db import close_all_connections
 import os
 
@@ -24,4 +24,5 @@ if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0', port=5000, debug=True)
     finally:
+
         close_all_connections()
