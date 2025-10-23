@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+
+    <!-- CSS -->
+     <link rel="stylesheet" href="{{ url_for('admin_route.static', filename='css/styles.css') }}">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Updock&display=swap" 
+    rel="stylesheet">
+</head>
+<body>
+    <div class="admin-panel">
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('admin_route.static', filename='images/LogoHomeMadeCoffee.png') }}" alt="Home Made Coffee Logo">
+            </div>
+            
+            <ul class="nav-list">
+                <li>
+                    <a href="/admin/dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/users">
+                        <i class="fas fa-users"></i>
+                        <span>Khách hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/categories" class="active">
+                        <i class="fas fa-tags"></i>
+                        <span>Danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>Cài đặt</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="title">
+                    <h2>Danh sách Sản phẩm > <span>{{ category_name }}</span></h2>
+                </div>
+                <div class="user-profile">
+                    <span class="admin-name">Xin chào, Trần Hoàng Việt</span>
+                    <span class="role">ADMIN</span>
+                </div>
+            </header>
+
+            <section class="page-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">
+                                {{ message }}
+                                <span class="flash-close">&times;</span>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="data-widget">
+                    <div class="page-header">
+                        <h3>Tổng sản phẩm: {{ total_product }}</h3>
+                        <button class="btn btn-primary" id="btn-add-product">
+                            <i class="fas fa-plus"></i> Thêm Sản phẩm
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="products-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th></th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Mô tả</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td>{{ product.product_id }}</td>
+                                    <td><img src="../static/images/{{ category_name }}/{{ product.image_url }}" alt=""></td>
+                                    <td>{{ product.product_name }}</td>
+                                    <td>{{ "{:,.0f} đ".format(product.price) }}</td>
+                                    <td>{{ product.description }}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i> Sửa</button>
+                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i> Xóa</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="add-product-modal">
+        <div class="modal-content">
+            <form action="{{ url_for('admin_route.add_product_route') }}" method="POST">
+                <h2>Thêm sản phẩm mới</h2>
+
+                <div class="form-group">
+                    <label for="product-image-selector">Ảnh sản phẩm</label>
+                    <!-- 1. Input thật để người dùng bấm vào và chọn file -->
+                    <input type="file" name="product-image" id="product-image-selector" accept="image/*" class="file-input">
+                    
+                    <!-- 2. Trường ẩn để lưu và gửi TÊN của file ảnh đi -->
+                    <input type="hidden" id="product-image" name="product-image">
+
+                    <!-- 3. (Tùy chọn) Hiển thị tên file đã chọn cho người dùng -->
+                    <span id="file-name-display" class="file-name-info"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-name">Tên sản phẩm</label>
+                    <input type="text" name="product-name" id="product-name" placeholder="Nhập tên sản phẩm..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-category">Danh mục</label>
+                    <select id="product-category" name="category_id_display" disabled>
+                        <option value="{{ category_id }}">{{ category_name }}</option>
+                    </select>
+                    <input type="hidden" name="product-category" value="{{ category_id }}">
+
+                <div class="form-group">
+                    <label for="product-price">Giá</label>
+                    <input type="number" name="product-price" id="product-price" placeholder="Nhập giá (ví dụ: 25000)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-desc">Mô tả</label>
+                    <textarea name="description" id="product-desc" rows="3" placeholder="Nhập mô tả chi tiết..."></textarea>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-cancel btn-close-modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVA SCRIPT -->
+    <script src="../static/js/main.js"></script>
+</body>
+</html>

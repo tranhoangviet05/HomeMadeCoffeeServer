@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+
+    <!-- CSS -->
+     <link rel="stylesheet" href="{{ url_for('admin_route.static', filename='css/styles.css') }}">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Updock&display=swap" 
+    rel="stylesheet">
+</head>
+<body>
+    <div class="admin-panel">
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('admin_route.static', filename='images/LogoHomeMadeCoffee.png') }}" alt="Home Made Coffee Logo">
+            </div>
+            
+            <ul class="nav-list">
+                <li>
+                    <a href="/admin/dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/users">
+                        <i class="fas fa-users"></i>
+                        <span>Khách hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/categories"  class="active">
+                        <i class="fas fa-tags"></i>
+                        <span>Danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>Cài đặt</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="title">
+                    <h2>Danh sách danh mục</h2>
+                </div>
+                <div class="user-profile">
+                    <span class="admin-name">Xin chào, Trần Hoàng Việt</span>
+                    <span class="role">ADMIN</span>
+                </div>
+            </header>
+
+            <section class="page-content">
+                <!-- <div class="page-header">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Thêm Khách hàng
+                    </button>
+                </div> -->
+
+                <!-- Hiển thị thông báo khi thêm danh mục thất bại -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">
+                                {{ message }}
+                                <span class="flash-close">&times;</span>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="data-widget">
+                    <div class="page-header">
+                        <h3>Tổng danh mục: {{ total_category }}</h3>
+
+                        <button class="btn btn-primary" id="btn-add-category">
+                            <i class="fas fa-plus"></i> Thêm Danh mục
+                        </button>
+                    </div>
+
+                    <div class="table-container" style="max-height: 480px;">
+                        <table class="categories-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên danh mục</th>
+                                    <th>Mô tả</th>
+                                    <th></th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in categories %}
+                                <tr>
+                                    <td>{{ c.category_id }}</td>
+                                    <td>{{ c.category_name }}</td>
+                                    <td>{{ c.description }}</td>
+                                    <td><a href="{{ url_for('admin_route.products', category_id=c.category_id) }}">Xem sản phẩm</a></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i> Sửa</button>
+                                            <form action="{{ url_for('admin_route.delete_category_route', category_id=c.category_id) }}" method="POST" style="display:inline;">
+                                                <button type="submit" class="action-btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này không?');">
+                                                    <i class="fas fa-trash"></i> Xóa
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- FORM THÊM DANH MỤC -->
+     <div class="modal-overlay" id="add-category-modal">
+        <div class="modal-content">
+            <form action="{{ url_for('admin_route.add_category_route') }}" method="POST">
+                <h2>Thêm danh mục mới</h2>
+                
+                <div class="form-group">
+                    <label for="category-name">Tên danh mục</label>
+                    <input type="text" name="category-name" id="category-name" placeholder="Nhập tên danh mục..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category-desc">Mô tả</label>
+                    <textarea id="category-desc" name="description" rows="4" placeholder="Nhập mô tả chi tiết..."></textarea>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-cancel btn-close-modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('admin_route.static', filename='js/main.js') }}"></script>
+</body>
+</html>

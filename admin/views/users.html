@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+
+    <!-- CSS -->
+     <link rel="stylesheet" href="{{ url_for('admin_route.static', filename='css/styles.css') }}">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Updock&display=swap" 
+    rel="stylesheet">
+</head>
+<body>
+    <div class="admin-panel">
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('admin_route.static', filename='images/LogoHomeMadeCoffee.png') }}" alt="Home Made Coffee Logo">
+            </div>
+            
+            <ul class="nav-list">
+                <li>
+                    <a href="/admin/dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/users" class="active">
+                        <i class="fas fa-users"></i>
+                        <span>Khách hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/categories">
+                        <i class="fas fa-tags"></i>
+                        <span>Danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>Cài đặt</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="title">
+                    <h2>Danh sách khách hàng</h2>
+                </div>
+                <div class="user-profile">
+                    <span class="admin-name">Xin chào, Trần Hoàng Việt</span>
+                    <span class="role">ADMIN</span>
+                </div>
+            </header>
+
+            <section class="page-content">
+                <!-- <div class="page-header">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Thêm Khách hàng
+                    </button>
+                </div> -->
+
+                <div class="data-widget">
+                    <h3>Tổng khách hàng: {{ total_user }}</h3>
+
+                    <div class="table-container" style="max-height: 480px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Ngày tạo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.user_id }}</td>
+                                    <td>{{ user.full_name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.phone }}</td>
+                                    <td>{{ user.created_at }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
