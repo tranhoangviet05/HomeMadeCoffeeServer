@@ -3,7 +3,7 @@ from db import get_db_connection, release_db_connection
 from api_models.auth_models import get_user_from_email
 import hashlib
 from datetime import datetime
-from admin import auth_route
+from routes import auth_route
 
 def hash_password(password):
     """Mã hóa mật khẩu bằng SHA256"""
@@ -129,4 +129,5 @@ def test():
     return jsonify({
         'status': 'success',
         'message': 'Server is running!'
+
     }), 200
