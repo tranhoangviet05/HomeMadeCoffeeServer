@@ -103,6 +103,14 @@ def add_product_route():
         
         return redirect(url_for("admin_route.products", category_id=category_id))
 
+@admin_route.route("/delete_product/<int:product_id>/<int:category_id>", methods=["POST"])
+def delete_product_route(product_id, category_id):
+    """Xoá sản phẩm"""
+    success, message = delete_product(product_id)
+    flash(message, "success" if success else "error")
+
+    return redirect(url_for("admin_route.products", category_id=category_id))
+
 @admin_route.route("/categories")
 def category():
     categories = get_categories()
@@ -145,5 +153,6 @@ def delete_category_route(category_id):
 @admin_route.route("/orders")
 def orders():
     return render_template("orders.html", title="Quản lý đơn hàng")
+
 
 
