@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 import os
 from admin.model.users_model import get_users
 from admin.model.categories_model import get_categories, get_category_by_id, add_category, delete_category
-from admin.model.products_model import get_products, add_product
+from admin.model.products_model import get_products, add_product, delete_product
 from . import admin_route
 from .image_uploader import upload_image_to_cloudinary
 
@@ -153,6 +153,7 @@ def delete_category_route(category_id):
 @admin_route.route("/orders")
 def orders():
     return render_template("orders.html", title="Quản lý đơn hàng")
+
 
 
 
