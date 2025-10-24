@@ -127,18 +127,12 @@
 
     <div class="modal-overlay" id="add-product-modal">
         <div class="modal-content">
-            <form action="{{ url_for('admin_route.add_product_route') }}" method="POST">
+            <form action="{{ url_for('admin_route.add_product_route') }}" enctype="multipart/form-data" method="POST">
                 <h2>Thêm sản phẩm mới</h2>
 
                 <div class="form-group">
                     <label for="product-image-selector">Ảnh sản phẩm</label>
-                    <!-- 1. Input thật để người dùng bấm vào và chọn file -->
                     <input type="file" name="product-image" id="product-image-selector" accept="image/*" class="file-input">
-                    
-                    <!-- 2. Trường ẩn để lưu và gửi TÊN của file ảnh đi -->
-                    <input type="hidden" id="product-image" name="product-image">
-
-                    <!-- 3. (Tùy chọn) Hiển thị tên file đã chọn cho người dùng -->
                     <span id="file-name-display" class="file-name-info"></span>
                 </div>
                 
@@ -175,4 +169,5 @@
     <!-- JAVA SCRIPT -->
     <script src="../static/js/main.js"></script>
 </body>
+
 </html>
