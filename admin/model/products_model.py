@@ -59,4 +59,28 @@ def add_product(product_name: str,
     
     finally:
         if conn:
+
+            release_db_connection(conn)
+
+def delete_product(product_id: int):
+    conn = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            DELETE FROM products
+            WHERE product_id = %s
+        """, (product_id,))
+        
+        conn.commit()
+        return True, "Xóa sản phẩm thành công."
+    
+    except Exception as e:
+        print(f"Delete product DB error: {e}")
+        return False, "Đã xảy ra lỗi khi xóa sản phẩm khỏi cơ sở dữ liệu."
+    
+    finally:
+        if conn:
             release_db_connection(conn)
